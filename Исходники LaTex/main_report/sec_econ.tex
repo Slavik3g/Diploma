@@ -1,0 +1,410 @@
+\section{\texorpdfstring{\MakeUppercase \economicalPartName}{\economicalPartName}}
+
+% Begin Calculations
+
+\subsection{Краткая характеристика программного продукта}
+
+Целью разработки программного модуля является обеспечение удобства и быстроты изменения содержимого изображений с помощью текстовых описаний. Данный модуль может использоваться как отдельное средство или как компонент в сложной интеллектуальной системе. Он имеет широкую область применения, которая включает в себя сферу дизайна, рекламы, архитектуры, интерьерного дизайна, а также обработку фото и видеоматериалов.
+
+Это программное средство предоставляет возможности по изменению объектов на изображении через текстовые команды, добавлению и удалению объектов, а также редактированию элементов на изображении.
+
+Целевой аудиторией выступать пользователи, которые заинтересованы в изменении содержимого изображений, быстрого их редактирования, а также компании, имеющие штаб дизайнеров для упрощения их работы, что позволит им сосредоточиться на творческих и уникальных аспектах, а не тратить время на более технические и трудоемкие задачи.
+
+Важность этого программного средства обусловлена растущим спросом на автоматизацию процессов обработки изображений и необходимостью инструментов для создания и редактирования графического контента в различных областях.
+
+Ключевыми преимуществами этого программного продукта являются его уникальный функционал, простота использования и высокая производительность. Он обеспечивает быстрое и легкое редактирование содержимого изображений, что делает его более привлекательным для потенциальных пользователей по сравнению с аналогичными программными продуктами.
+
+Потенциальные экономические выгоды от использования данного программного средства включают повышение производительности и снижение затрат на создание и редактирование графического контента, что может привести к увеличению прибыли организации-пользователя.
+
+Этот продукт разрабатывается для массового рынка, что предполагает его широкое использование и достаточный спрос для успешной реализации на рынке информационных технологий. Важно отметить, что продукт ориентирован на разнообразные потребности пользователей, что способствует его популяризации и укреплению позиций на конкурентном рынке. Кроме того, он включает современные технологии, обеспечивающие конкурентные преимущества.
+
+\subsection{Расчет инвестиций в разработку программного средства}
+
+\subsubsection{Расчет затрат на основную заработную плату разработчиков}
+
+Затраты на разработку высчитываются исходя из количества исполнителей, объема их
+работ, а также размера премии. Расчет затрат на основную заработную плату можно
+произвести по формуле:
+
+\begin{equation}
+  \label{eq:econ:Zo}
+  \text{З}_\text{о} = \text{К}_\text{пр} \cdot
+    \sum_{i = 1}^{n} \text{З}_{\text{ч}i} \cdot t_i,
+\end{equation}
+\begin{explanationx}
+  \item[где] $ \text{К}_\text{пр} $ -- коэффициент премий;
+  \item $ n $ -- количество категорий исполнителей, занятых разработкой
+  программного средства;
+  \item $ \text{З}_{\text{ч}i} $ -- часовая заработная плата исполнителя $ i $-й категории, \rub;
+  \item $ t_i $ -- трудоемкость работ исполнителя $ i $-й категории, ч.
+\end{explanationx}
+
+Размер месячной заработной платы исполнителя каждой категории соответствует сложившемуся на рынке труда размеру заработной платы для данных категорий. В качестве официального информационного источника по заработной плате был использован отечественный портал~\cite{salary_rb}.
+
+Расчет затрат на основную заработную плату команды разработчиков представлен в таблице~\ref{table:econ:calc_zar_plata}. В качестве опорной выступает медианная заработная плата. Часовая заработная плата каждого исполнителя определяется путем деления его месячной заработной платы на количество рабочих часов в месяце – 168 часов. Размер премии составляет 50\% от размера основной заработной платы.
+
+\FPeval{\valPremiaPercent}{50}
+\FPeval{\valKpr}{round(1 + \valPremiaPercent / 100, \configRoundSigns)}
+\FPeval{\valtMonth}{168}
+
+\FPeval{\valZchVedProger}{round(4504, \configRoundSigns)}
+\FPeval{\valHourVedProger}{clip(\valZchVedProger / \valtMonth)}
+\FPeval{\valHourVedProgerPrint}{round(\valHourVedProger, \configRoundSigns)}
+\FPeval{\valtVedProger}{round(\valtMonth * 2, 0)}
+\FPeval{\valTotalVedProger}{round(\valHourVedProger * \valtVedProger, \configRoundSigns)}
+
+\FPeval{\valZchProger}{round(1955, \configRoundSigns)}
+\FPeval{\valHourProger}{clip(\valZchProger / \valtMonth)}
+\FPeval{\valHourProgerPrint}{round(\valHourProger, \configRoundSigns)}
+\FPeval{\valtProger}{round(\valtMonth * 2, 0)}
+\FPeval{\valTotalProger}{round(\valHourProger * \valtProger, \configRoundSigns)}
+
+\FPeval{\valZchTester}{round(2607, \configRoundSigns)}
+\FPeval{\valHourTester}{clip(\valZchTester / \valtMonth)}
+\FPeval{\valHourTesterPrint}{round(\valHourTester, \configRoundSigns)}
+\FPeval{\valtTester}{round(\valtMonth / 2, 0)}
+\FPeval{\valTotalTester}{round(\valHourTester * \valtTester, \configRoundSigns)}
+
+\FPeval{\valZchBA}{round(4335, \configRoundSigns)}
+\FPeval{\valHourBA}{clip(\valZchBA / \valtMonth)}
+\FPeval{\valHourBAPrint}{round(\valHourBA, \configRoundSigns)}
+\FPeval{\valtBA}{\valtMonth}
+\FPeval{\valTotalBA}{round(\valHourBA * \valtBA, \configRoundSigns)}
+
+\FPeval{\valTotal}{round(\valTotalProger + \valTotalTester + \valTotalVedProger + \valTotalBA, \configRoundSigns)}
+\FPeval{\valPremiaSum}{round(\valTotal * \valPremiaPercent / 100, \configRoundSigns)}
+\FPeval{\valZo}{round(\valTotal + \valPremiaSum, \configRoundSigns)}
+
+\begin{table}[ht]
+  \caption{Расчет затрат на основную заработную плату разработчиков}
+  \label{table:econ:calc_zar_plata}
+  \begin{tabular}{| >{\raggedright}m{0.20\textwidth}
+                  | >{\centering}m{0.18\textwidth}
+                  | >{\centering}m{0.18\textwidth}
+                  | >{\centering}m{0.18\textwidth}
+                  | >{\centering\arraybackslash}m{0.127\textwidth}|}
+      \hline
+      \centering Категория исполнителя
+      & Месячная заработная плата, \rub
+      & Часовая заработная плата, \rub
+      & Трудоемкость работ, ч
+      & Итого, \rub \\
+
+      \hline
+      Ведущий-программист
+      & \num\valZchVedProger
+      & \num\valHourVedProgerPrint
+      & \num\valtVedProger
+      & \num\valTotalVedProger
+      \\
+      
+      \hline
+      Инженер-программист
+      & \num\valZchProger
+      & \num\valHourProgerPrint
+      & \num\valtProger
+      & \num\valTotalProger
+      \\
+
+      \hline
+      Инженер-тестировщик
+      & \num\valZchTester
+      & \num\valHourTesterPrint
+      & \num\valtTester
+      & \num\valTotalTester
+      \\
+
+      \hline
+      Бизнес-аналитик
+      & \num\valZchBA
+      & \num\valHourBAPrint
+      & \num\valtBA
+      & \num\valTotalBA
+      \\
+      
+      \hline
+      \multicolumn{4}{|l|}{Итого}
+      & \num\valTotal
+      \\
+
+      \hline
+      \multicolumn{4}{|l|}{Премия ($ \num\valPremiaPercent \ \% $)}
+      & \num\valPremiaSum
+      \\
+
+      \hline
+      \multicolumn{4}{|l|}{Всего затраты на основную заработную плату разработчиков}
+      & \num\valZo
+      \\
+
+      \hline
+  \end{tabular}
+\end{table}
+
+\fixTableSectionSpace
+
+\subsubsection{Расчет затрат на дополнительную заработную плату разработчиков}
+
+\FPeval{\valNdPercent}{15}
+
+Для расчета затрат на дополнительную заработную плату разработчиков воспользуемся
+следующей формулой:
+
+\begin{equation}
+  \label{eq:econ:Zd}
+  \text{З}_\text{д} = \frac{\text{З}_\text{о} \cdot \text{Н}_\text{д}}
+    {100},
+\end{equation}
+\begin{explanationx}
+  \item[где] $ \text{Н}_\text{д} $ -- норматив дополнительной заработной платы.
+\end{explanationx}
+
+Будем считать, что значение норматива дополнительной заработной платы составляет $ \num\valNdPercent \ \% $.
+
+\FPeval{\valZd}{round(\valZo * \valNdPercent / 100, \configRoundSigns)}
+
+\subsubsection{Расчет отчислений на социальные нужды}
+
+\FPeval{\valNSotsPercent}{35}
+
+Размер отчислений на социальные нужды определяется ставкой отчислений, которая
+в соответствии с действующим законодательством по состоянию на \econCalcDate\
+составляет $ \num\valNSotsPercent \ \% $. Найдем размер отчислений по формуле:
+
+\begin{equation}
+  \label{eq:econ:RSots}
+  \text{Р}_\text{соц} = \frac{(\text{З}_\text{о} + \text{З}_\text{д}) \cdot \text{Н}_\text{соц}}
+    {100},
+\end{equation}
+\begin{explanationx}
+  \item[где] $ \text{Н}_\text{соц} $ -- ставка отчислений на социальные нужды.
+\end{explanationx}
+
+\FPeval{\valRSots}{round((\valZo + \valZd) * \valNSotsPercent / 100, \configRoundSigns)}
+
+\subsubsection{Расчет прочих расходов}
+
+\FPeval{\valNPrPercent}{30}
+
+Прочие расходы рассчитываются с учетом норматива прочих расходов. Примем значение
+норматива равным $ \num\valNPrPercent \ \% $. Используя это значение рассчитаем прочие расходы
+по формуле:
+
+\begin{equation}
+  \label{eq:econ:RPr}
+  \text{Р}_\text{пр} = \frac{\text{З}_\text{о} \cdot \text{Н}_\text{пр}}
+    {100},
+\end{equation}
+\begin{explanationx}
+  \item[где] $ \text{Н}_\text{пр} $ -- норматив прочих расходов.
+\end{explanationx}
+
+\FPeval{\valRPr}{round(\valZo * \valNPrPercent / 100, \configRoundSigns)}
+
+\subsubsection{Расчет расходов на реализацию}
+
+\FPeval{\valRPercent}{4}
+
+Для разрабатываемого приложения норматив расходов на реализацию составляет $ \num\valRPercent \ \% $. Под расходами на реализацию понимают выраженные в денежной форме затраты материальных, трудовых и других видов ресурсов торговых организаций по доведению продукта до конечного потребителя, которые рассчитываются по формуле:
+
+\begin{equation}
+  \label{eq:econ:R}
+  \text{Р}_\text{р} = \frac{\text{З}_\text{о} \cdot \text{Н}_\text{р}}
+    {100},
+\end{equation}
+\begin{explanationx}
+  \item[где] $ \text{Н}_\text{р} $ -- норматив расходов на реализацию.
+\end{explanationx}
+
+\FPeval{\valR}{round(\valZo * \valRPercent / 100, \configRoundSigns)}
+
+\subsubsection{Расчет общей суммы затрат}
+
+Определим общую сумму затрат как сумму ранее вычисленных расходов: на основную
+заработную плату, дополнительную заработную плату, отчислений на социальные нужды и
+прочие расходы. Для определения этого показателя используется следующая формула:
+
+\begin{equation}
+  \label{eq:econ:Zr}
+  \text{З}_\text{р} = \text{З}_\text{о} + \text{З}_\text{д}
+    + \text{Р}_\text{соц} + \text{Р}_\text{пр} + \text{Р}_\text{р}.
+\end{equation}
+
+\FPeval{\valZr}{round(\valZo + \valZd + \valRSots + \valRPr , \configRoundSigns)}
+
+С использованием ранее приведенных формул найдем значение затрат, определим общую сумма затрат на разработку в таблице~\ref{table:econ:calc_invest_development}.
+
+\begin{table}[ht]
+  \caption{Расчет инвестиций в разработку программного средства}
+  \label{table:econ:calc_invest_development}
+  \begin{tabular}{| >{\raggedright}m{0.35\textwidth}
+                  | >{\centering}m{0.42\textwidth}
+                  | >{\centering\arraybackslash}m{0.16\textwidth}|}
+      \hline
+      \centering Наименование статьи затрат
+      & Расчет по формуле
+      & Значение, \rub
+      \\
+
+      \hline
+      1 Основная заработная плата разработчиков
+      & см. таблицу~\ref{table:econ:calc_zar_plata}
+      & \num\valZo
+      \\
+
+      \hline
+      2 Дополнительная заработная плата разработчиков
+      & \vspace{0.5em} $ \scalemath{1}{\text{З}_\text{д} = \frac{\num\valZo \cdot \num\valNdPercent}{100}} $ \vspace{0.5em}
+      & \num\valZd
+      \\
+
+      \hline
+      3 Отчисления на социальные нужды
+      & \vspace{0.6em} $ \scalemath{1}{\text{Р}_\text{соц} = \frac{(\num\valZo + \num\valZd) \cdot \num\valNSotsPercent}{100}}$ \vspace{0em}
+      & \num\valRSots
+      \\
+
+      \hline
+      4 Прочие расходы
+      & \vspace{0.5em} $ \scalemath{1}{\text{Р}_\text{пр} = \frac{\num\valZo \cdot \num\valNPrPercent}{100}} $ \vspace{0.5em}
+      & \num\valRPr
+      \\
+
+      \hline
+      5 Расходы на реализацию
+      & \vspace{0.5em} $ \scalemath{1}{\text{Р}_\text{р} = \frac{\num\valZo \cdot \num\valRPercent}{100}} $ \vspace{0.5em}
+      & \num\valR
+      \\
+      
+      \hline
+      6 Общая сумма затрат на разработку
+      & \vspace{0.5em} $\text{З}_\text{р} = \num\valZo + \num\valZd + \num\valRSots + \num\valRPr $ \vspace{0.5em}
+      & \num\valZr
+      \\
+      \hline
+  \end{tabular}
+\end{table}
+
+\fixTableSectionSpace
+
+\subsection{Расчет экономического эффекта от реализации программного средства на рынке}
+
+\subsubsection{Расчет результата для организации-разработчика}
+
+Экономический эффект организации-разработчика программного средства представляет собой прирост чистой прибыли от его продажи на рынке потребителям, величина которого зависит от объема продаж, цены реализации и затрат на разработку программного средства.
+
+\begin{equation}
+  \label{eq:econ:deltaPCh}
+  \Delta \text{П}_\text{ч} = \bigl(\text{Ц}_\text{отп} \cdot \text{N} - \text{НДС} \bigr) \cdot \text{Р}_\text{пр} \cdot \biggl( 1 - \frac{\text{Н}_\text{п}}{100} \biggr),
+\end{equation}
+\begin{explanationx}
+  \item[где] $ \text{Н}_\text{п} $ -- ставка налога на прибыль согласно действующему законодательству, \%;
+  \item $ \text{Ц}_\text{отп} $ -- отпускная цена копии (лицензии) программного средства, р.;
+  \item $ \text{N} $ -- количество копий (лицензий) программного средства, реализуемое за год, шт.;
+  \item $ \text{Р}_\text{пр} $ -- рентабельность продаж копий (лицензий), \%.
+\end{explanationx}
+
+\FPeval{\valCopyPrice}{60}
+\FPeval{\valCopyCount}{5000}
+\FPeval{\valCopyRent}{30}
+
+Изучив рынок дизайнеров, графических художников, можно сделать вывод, что в СНГ по данным headhunter открыто 7 тыс. вакансий для различных творческих профессий. Исходя из этого можно сделать вывод, что количество профессиональных дизайнеров на рынке может быть в разы больше, в районе 15~-- 20 тыс. Предположим, что 5\% из них могли бы быть заинтересованы в предлагаемом продукте, что составляет около 1000 пользователей.
+
+Учитывая выпуск приблизительно 120 тысяч мобильных приложений на платформах Google Play Store и App Store в январе 2024 года, вероятно, что некоторые из этих приложений потребуют разработки пользовательских интерфейсов и услуг дизайнеров. Если предположить, что около 0.1\% из этого числа, что составляет приблизительно 120 приложений ежемесячно или 1440 приложений в год, могут быть заинтересованы в таких услугах, это открывает возможности для потенциального сотрудничества.
+
+Согласно информации от Adobe, примерно 20 миллионов человек активно используют Adobe Photoshop. Вероятно, только небольшая часть этих пользователей ищет инструменты для редактирования изображений. Если предположить, что интерес проявляют всего 0.01\%, это составит примерно 2000 человек, которые могут быть заинтересованы в продукте.
+
+На основании данных предположений, прогнозируемый годовой объем продаж программного модуля колеблется между 3 и 10 тысячами единиц. Если выбрать среднее значение в этом диапазоне, ожидаемый объем продаж составит около $ \num\valCopyCount $ копий за год.
+
+При установке розничной цены программного модуля, необходимо учитывать несколько ключевых аспектов. Анализ рыночных цен на аналогичные программные продукты в области дизайна показывает, что стоимость годовой подписки на такие программы варьируется от 50 до 100 рублей. В то же время, продукт выделяется на фоне конкурентов за счет своего уникального и обширного функционала, предлагая пользователям передовые возможности для эффективного и удобного редактирования изображений.
+
+Исходя из этих соображений, стратегия ценообразования должна отражать как высокую стоимость, так и уникальность предлагаемых функций. С учетом существующего ценового диапазона для подобных программных продуктов, а также принимая во внимание уникальные преимущества нашего решения, мы предлагаем установить цену нашего продукта немного выше среднего рыночного уровня. Рассматривая ценовой диапазон от 40 до 100 рублей, продукт может быть оценен в $ \num\valCopyPrice $ рублей за копию, что делает его доступным, но одновременно отражает его ценность и уникальность на рынке.
+
+В итоге, определяя цену в $ \num\valCopyPrice $ рублей за копию, мы подчеркиваем высокое качество и эксклюзивность нашего программного модуля, делая его привлекательным выбором для целевой аудитории в области дизайна. Эта цена соответствует как потребностям рынка, так и стратегическим целям нашего продукта, обеспечивая его конкурентоспособность и востребованность.
+
+Исходя из полученных данных можно произвести оставшиеся вычисления.
+
+Налог на добавленную стоимость определяется по формуле:
+
+\begin{equation}
+  \label{eq:econ:nds}
+    \text{НДС} = \frac{\text{Ц}_\text{отп} \cdot \text{N} \cdot \text{Н}_\text{дс}}
+    {100 \% + \text{Н}_\text{дс}},
+\end{equation}
+\begin{explanationx}
+  \item[где] $ \text{Н}_\text{дс} $ -- ставка налога на добавленную стоимость в соответствии с 
+действующим законодательством, \%;
+\end{explanationx}
+
+\FPeval{\valNdsPercent}{20}
+\FPeval{\valNds}{round((\valCopyPrice * \valCopyCount * \valNdsPercent)/(100 + \valNdsPercent), \configRoundSigns)}
+
+
+По состоянию на \econCalcDate, ставка налога на добавленную стоимость составляет $ \num\valNdsPercent \ \% $.
+
+Вычисление налога на добавленную стоимость:
+
+\begin{equation}
+  \label{eq:econ:ndsCalc}
+    \text{НДС} = \frac{\num\valCopyPrice \cdot \num\valCopyCount \cdot \num\valNdsPercent}
+    {100 + \num\valNdsPercent} = \num\valNds \rubFormula
+\end{equation}
+
+
+\FPeval{\valNPPercent}{20}
+\FPeval{\valDeltaPCh}{round((\valCopyPrice * \valCopyCount - \valNds) * (\valCopyRent / 100) * (1 - \valNPPercent / 100), \configRoundSigns)}
+
+По состоянию на \econCalcDate, ставка налога на прибыль составляет $ \num\valNPPercent \ \% $, а рентабельность $ \num\valCopyRent \ \% $ . Используя данные значения, найдем прирост чистой прибыли по формуле~(\ref{eq:econ:deltaPCh}):
+
+\vspace{-1em}
+
+\begin{equation}
+  \label{eq:econ:deltaPChCalc}
+  \Delta \text{П}_\text{ч} =  \bigl(\num\valCopyPrice \cdot \num\valCopyCount - \num\valNds \bigr) \cdot \frac{\num\valCopyRent}{100} \cdot \biggl( 1 - \frac{\num\valNPPercent}{100} \biggr) = \num\valDeltaPCh \rubFormula
+\end{equation}
+
+\fixTableSectionSpace
+
+\subsection{Расчет показателей экономической эффективности разработки и реализации программного средства на рынке}
+
+Для оценки экономической эффективности разработки и реализации программного средства на рынке необходимо сравнить сумму инвестиций в его разработку и полученный годовой прирост чистой прибыли. Из вышеприведенных расчетов видно, что сумма инвестиций в разработку, равная $ \num\valZr \rubFormula$  меньше, чем годовой прирост чистой прибыли, равный $ \num\valDeltaPCh \rubFormula$ Из этого можно сделать вывод, что инвестиции окупятся меньше, чем через год. 
+
+Исходя из этого оценка экономической эффективности инвестиций в разработку 
+программного средства осуществляется с помощью расчета рентабельности инвестиций (Return on Investment, ROI), которая рассчитывается по формуле:
+
+
+\begin{equation}
+  \label{eq:econ:Ri}
+  \text{ROI} = \frac{\Delta \text{П}_\text{ч} - \text{З}_\text{р}}{\text{З}_\text{р}}
+    \cdot 100 \ \%,
+\end{equation}
+\begin{explanationx}
+  \item[где] $ \Delta \text{П}_\text{ч} $ -- прироста чистой прибыли, р.;
+  \item $ \text{З}_\text{р} $ -- полная сумма затрат на разработку программного обеспечения, р.
+\end{explanationx}
+
+\FPeval{\valRi}{round((\valDeltaPCh - \valZr) / \valZr * 100, \configPercentRoundSigns)}
+
+Используя ранее определенные значения, найдем значение рентабельности инвестиций по формуле~(\ref{eq:econ:Ri}):
+
+\begin{equation}
+  \label{eq:econ:RiCalc}
+  \text{ROI} = \frac{\num\valDeltaPCh - \num\valZr}{\num\valZr}
+    \cdot 100 = \num\valRi \ \%.
+\end{equation}
+
+\fixTableSectionSpace
+
+\subsection{Вывод об экономической эффективности}
+
+В результате технико-экономического обоснования разработки и 
+реализации программного модуля для изменения изображений на основе текстовых описаний были получены следующие результаты:
+
+\begin{itemize}
+    \item общие затраты на разработку программного продукта составили $ \num\valZr $ рублей;
+    \item годовой прирост прибыли равен $ \num\valDeltaPCh $ рублей;
+    \item рентабельность инвестиций $ \num\valRi $ \%.
+\end{itemize}
+
+На основании проведенных расчетов можно сделать следующие вывод, что разработка и реализация программного продукта является эффективным вложением инвестиций, так как рентабельность выше ставки Национального Банка по депозитам, составляющую 10,29 \% на \econCalcDate, а так же проект окупится менее, чем за год. Таким образом, разработка программного модуля для 
+редактирования изображений по текстовому описанию является эффективным вложением инвестиций.

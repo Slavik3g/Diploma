@@ -1,0 +1,548 @@
+Класс \lstinline{DiffiusionPainter}:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+class DiffiusionPainter:
+   js_path = '/usr/local/share/jupyter/nbextensions/'
+    def __init__(self, original_image_filename, canvas_w=None, canvas_h=None):
+        self.iter = 0
+        self.num_images_per_prompt = 3
+        self.guidance_scale = 7.5
+        self.num_inference_steps = 20
+        self.default_image_filename = original_image_filename
+        file_name, file_ext = original_image_filename.split('.')
+        self.default_image_name = file_name
+        self.default_image_ext = file_ext
+        self.canvas_w = canvas_w
+        self.canvas_h = canvas_h
+        self.last_mask_path = None
+        self.saved_images_pathes = []
+    @staticmethod
+    def resize_save_img(img_path, new_img_w=800, new_img_h=800):
+        img = Image.open(img_path)
+        img = img.resize((new_img_w, new_img_h))
+        img.save(img_path)
+        return img
+    def prepare(self):
+        original_image_path = DiffiusionPainter.js_path + self.default_image_filename
+        original_image_pil = Image.open(original_image_path)
+        self.default_image_name = self.default_image_name + 'diffusion'
+        self.default_image_filename = self.default_image_name + '.' + self.default_image_ext
+        original_image_path = DiffiusionPainter.js_path + self.default_image_filename
+        original_image_pil.save(original_image_path)
+        if self.canvas_w is not None and self.canvas_h is not None:
+            print('Making like canvas')
+            print(original_image_path)
+            original_image_pil = DiffiusionPainter.resize_save_img(original_image_path, self.canvas_w, self.canvas_h)
+        else:
+\end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+            self.canvas_w, self.canvas_h = original_image_pil.size
+        image_width, image_height = original_image_pil.size
+        print(image_width, image_height)
+        print(image_width % 8)
+        print(image_height % 8)
+        if not ((image_width % 8 == 0) and (image_height % 8 == 0)):
+            print('resizing')
+            new_image_width = image_width - image_width % 8
+            new_image_height = image_height - image_height % 8
+           DiffiusionPainter.resize_save_img(original_image_path, new_image_width, new_image_height)
+            self.canvas_w, self.canvas_h = new_image_width, new_image_height
+        self.saved_images_pathes.append(original_image_path)
+    def predict(self):
+        self.run_diffusion_pipeline(self.default_image_filename)
+    def paint_mask_on_img(self, img_filename='photo.jpg', quality=0.8):
+        js = Javascript('''
+            async function takePhoto(img_filename, quality, canvas_w, canvas_h) {
+                const div = document.createElement('div');
+                div.innerHTML += '<p>Размер кисти:</p>'
+                div.innerHTML += '<input style="margin: 8px 0;" type="range" min="1" max="100" value="40" class="slider" id="BrushRange"><br><hr>'
+                const capture = document.createElement('button');
+                capture.textContent = 'Поехали';
+                div.appendChild(capture);
+                var inp = document.createElement("input");
+                inp.style.width = "600px"
+                inp.placeholder = 'Напишите что вы хотите видеть'
+                div.appendChild(inp);
+                const input_style = 'input {padding: 12px 20px; box-sizing: border-box;}; input:focus  { background-color: lightblue;}'
+                const hr_style = 'hr {width:520px; text-align:left; margin-left:0}'
+                const canvas_style = 'canvas    {margin: 15px}'
+                const button_style = 'button {margin: 5px;width:100px; border-radius:5px; height:42px; background-color:#0a0a23;  color: #fff;;}'
+\end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+                const button_hover = 'button:hover {background-color:#002ead; transition: 0.3s;}'
+                const button_focus = 'button:focus {outline-color: transparent; outline-style:solid; box-shadow: 0 0 0 4px #5a01a7;}'
+                const p_style = 'p    {font-family:courier, monospace; font-weight:bold;color: #7a1e1e; font-size:120; margin-bottom: 0px;}'
+                document.head.innerHTML += `<style> {input_style} {hr_style} {canvas_style} {p_style} {button_style} {button_hover} {button_focus}</style>`
+                document.body.appendChild(div);
+                const div_additional = document.createElement('div');
+                var inp_additional = document.createElement("input");
+                inp_additional.name = 'Style: '
+                inp_additional.style.width = "200px"
+                inp_additional.style.marginLeft = "110px";
+                inp_additional.value = 'realistic, high-resolution'
+                inp_additional.placeholder = 'Additional attributes'
+                div_additional.appendChild(inp_additional);
+                document.body.appendChild(div_additional);
+                var slider = document.getElementById("BrushRange");
+                slider.oninput = function() {
+                    radios = this.value;}
+                const canvas_div = document.createElement('div');
+                canvas_div.style.width = `{canvas_w}px`
+                canvas_div.style.height = `{canvas_h}px`
+                const canvas_image = document.createElement('canvas');
+                canvas_image.width = canvas_w;
+                canvas_image.height = canvas_h;
+                document.body.appendChild(canvas_image);
+                const canvas = document.createElement('canvas');
+                canvas.width = canvas_w;
+                canvas.height = canvas_h;
+                canvas.style.position = 'absolute'
+                canvas.style.opacity = 0.4
+                document.body.appendChild(canvas);
+                canvas_div.appendChild(canvas);
+                canvas_div.appendChild(canvas_image)          document.body.appendChild(canvas_div);
+                \end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+                var ctx = canvas.getContext("2d");
+                radios = slider.value
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillRect(0, 0, canvas_w, canvas_h);
+                var ctx_image = canvas_image.getContext("2d");
+                var img = new Image()
+                const url = "/nbextensions/" + img_filename
+                console.log('url of image: ', url)
+                img.src = url
+                img.crossOrigin = "anonymous"
+                img.onload = function () {
+                    ctx_image.drawImage(img, 0, 0);}
+                var mouse = {x: 0, y: 0}
+                canvas.addEventListener('mousemove', function(e) {
+                    mouse.x = e.pageX - this.offsetLeft
+                    mouse.y = e.pageY - this.offsetTop})
+                canvas.onmousedown = ()=>{
+                    canvas.addEventListener('mousemove', onPaint)}
+                canvas.onmouseup = ()=>{
+                    canvas.removeEventListener('mousemove', onPaint)}
+                console.log('math pi: ', Math.PI)
+                var onPaint = ()=>{
+                    console.log(mouse.x, mouse.y)
+                    ctx.beginPath()
+                    ctx.arc(mouse.x, mouse.y, radios, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'black';
+                    ctx.fill();}
+                await new Promise((resolve) => capture.onclick = resolve);
+                img_info = canvas.toDataURL('image/jpeg', quality)
+                intered_text = inp.value
+                intered_style = inp_additional.value
+                final_text = intered_text + ', ' + intered_style
+                div.remove()
+                canvas_div.remove()
+                canvas.remove()
+                canvas_image.remove()
+                inp.remove()
+                div_additional.remove()
+                return [img_info, final_text];''')
+        display(js)
+        mask, prompt = eval_js('takePhoto("{0}", {1}, {2}, {3})'.format(img_filename, quality, self.canvas_w, self.canvas_h))
+        binary = b64decode(mask.split(',')[1])
+        \end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+        img_name, img_ext = img_filename.split('.')
+        mask_filename = img_name + '_mask' + '.' + img_ext
+        mask_path = DiffiusionPainter.js_path + mask_filename
+        with open(mask_path, 'wb') as f:
+            f.write(binary)
+        return mask_path, prompt
+    @staticmethod
+    def make_mask(mask_path, threshold_level=50):
+        mask = cv2.imread(mask_path)
+        mask_gray = cv2.cvtColor(mask,  cv2.COLOR_BGR2GRAY)
+        mask = mask_gray < threshold_level
+        return mask
+    def run_drawing(self, image_filename, num_images_per_prompt, guidance_scale=7.5, num_inference_steps=50, iter=None):
+        print('Image name: ', image_filename, end='\n\n\n')
+        selected_image_path = DiffiusionPainter.js_path + image_filename
+        img = Image.open(selected_image_path)
+        new_image_filename = self.default_image_name + f'_{self.iter}' + '.' + self.default_image_ext
+        new_image_path = DiffiusionPainter.js_path + new_image_filename
+        img.save(new_image_path)
+        mask_path, prompt = self.paint_mask_on_img(img_filename=image_filename)
+        self.last_mask_path = mask_path
+        mask = DiffiusionPainter.make_mask(mask_path)
+        inpainted_images, inpaitned_pathes = self.run_diffusion(image_path=new_image_path, mask=mask, prompt=prompt, guidance_scale=guidance_scale, num_inference_steps=num_inference_steps, num_images_per_prompt=num_images_per_prompt, save=self.iter)
+        new_img = inpainted_images[0]
+        clear_output(wait=True)
+        self.saved_images_pathes.append(selected_image_path)      self.run_diffusion_pipeline(original_image_name=new_image_filename, inpaitned_pathes=inpaitned_pathes)
+    def run_diffusion(self, image_path, mask, prompt="Magic red animal", num_images_per_prompt=1, guidance_scale=7, num_inference_steps=40, save=None):
+        img_pil = Image.open(image_path)
+        mask_pil = Image.fromarray(mask)
+        print('Размер изображения : ', img_pil.size)
+        print('Размер маски  : ', mask_pil.size)
+        img_pil = img_pil.resize((self.canvas_w, self.canvas_h))
+        \end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+        mask_pil = mask_pil.resize((self.canvas_w, self.canvas_h))
+        img_width, img_height = img_pil.size
+        print('\n\nИзменение.....')
+        inpaint_prompt = prompt
+        num_images_per_prompt = num_images_per_prompt
+        guidance_scale = guidance_scale
+        num_inference_steps = num_inference_steps
+        print('Промт: ', inpaint_prompt)
+        print('Шаги: ', num_inference_steps)
+        print('Чувствительность: ', guidance_scale)
+        print('\nМаска: ')
+        display(mask_pil)
+        inpainted_images = pipe(prompt=inpaint_prompt, image=img_pil, mask_image=mask_pil,
+                            num_inference_steps=num_inference_steps,
+                            guidance_scale=guidance_scale,
+                            height=img_height, width=img_width,
+                            num_images_per_prompt=num_images_per_prompt
+                            ).images
+        inpainted_pathes = []
+        if save is not None:
+            head, tail = os.path.split(image_path)
+            name = tail.split('_')
+            if len(name) == 1: # [name.jpg]
+                real_image_name, real_image_ext = name[0].split('.')
+                real_image_iter = 1
+            else:
+                real_image_name = name[0]
+                real_image_iter, real_image_ext = name[1].split('.')
+            for idx, img in enumerate(inpainted_images):
+                img_path = DiffiusionPainter.js_path + real_image_name + f'_{real_image_iter}_{idx+1}' + '.' + real_image_ext
+                print('saving to: ', img_path)
+                inpainted_pathes.append(img_path)
+                img.save(img_path)
+        return inpainted_images, inpainted_pathes
+    def create_widgets(self, original_image_filename, inpainted_images_pathes):
+        self.widgets_ls = []
+        self.num_images_per_prompt_slider = widgets.IntSlider(
+            value=self.num_images_per_prompt,
+            min=1,
+            max=10,
+            step=1,
+            \end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+            description='Кол-во изоб.:',
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d')
+        self.guidance_scale_widget = widgets.BoundedFloatText(
+            value=self.guidance_scale,
+            min=0,
+            max=500.0,
+            step=1.0,
+            description='Чувствительность:',
+            disabled=False)
+        self.num_inference_steps_widget = widgets.BoundedIntText(
+            value=self.num_inference_steps,
+            min=0,
+            max=200,
+            step=1,
+            description='Шаги:',
+            disabled=False)
+        def make_options_dropdown(num_inpainted_images):
+            options = [('default', 0)]
+            if self.iter > 1:
+                options = [('default', 0), ('original', 1)] + [(f'Inpainted_{i+1}', i+2) for i in range(num_inpainted_images)]
+            return options
+        self.inpainted_img_to_select_dropdown = widgets.Dropdown(
+            options=make_options_dropdown(num_inpainted_images=len(inpainted_images_pathes)),
+            value = 0 if self.iter == 1 else 2,
+            description='Показать:',)
+        self.btn_next = widgets.Button(
+            description='Продолжить',
+            disabled=False,
+            button_style='',
+            tooltip='Click me',
+            icon='check')
+        self.btn_quit = widgets.Button(
+            description='Остановить',
+            disabled=False,
+            button_style='',
+            tooltip='Click me',
+            icon='check')
+        self.widgets_ls = [self.num_images_per_prompt_slider, self.guidance_scale_widget, self.num_inference_steps_widget, 
+        \end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+            self.inpainted_img_to_select_dropdown, self.btn_next, self.btn_quit]
+        def get_selected_image_name():
+            if self.iter == 1:
+                return self.default_image_filename
+            else:
+                if self.inpainted_img_to_select_dropdown.value == 0:
+                    return self.default_image_filename
+                if self.inpainted_img_to_select_dropdown.value == 1:
+                    return original_image_filename
+                d_down_val = self.inpainted_img_to_select_dropdown.value
+                print('d down: ', d_down_val)
+                print('selected image name: ', inpainted_images_pathes[d_down_val-2].split('/')[-1])
+                return inpainted_images_pathes[d_down_val-2].split('/')[-1]
+        def on_btn_next_clicked(b):
+            value_from_dropdown = self.inpainted_img_to_select_dropdown.value
+            selected_image_name = get_selected_image_name()
+            num_images_per_prompt = self.num_images_per_prompt_slider.value
+            guidance_scale = self.guidance_scale_widget.value
+            num_inference_steps = self.num_inference_steps_widget.value
+            clear_output()
+            self.num_images_per_prompt = num_images_per_prompt
+            self.guidance_scale = guidance_scale
+            self.num_inference_steps = num_inference_steps
+            self.run_drawing(image_filename=selected_image_name, num_images_per_prompt=num_images_per_prompt, guidance_scale=guidance_scale, num_inference_steps=num_inference_steps)
+        def on_btn_quit_clicked(b):
+            selected_image_filname = get_selected_image_name()
+            selected_image_path = DiffiusionPainter.js_path + selected_image_filname
+            img_final = Image.open(selected_image_path)
+            final_image_name = self.default_image_name + '_final' + '.' + self.default_image_ext
+            final_image_path = DiffiusionPainter.js_path + final_image_name
+            img_final.save(final_image_path)
+                    \end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+            self.saved_images_pathes.append(final_image_path)
+            for w in self.widgets_ls:
+                w.disabled = True
+        def inpainted_img_to_select_dropdown_change(change):
+            if change['type'] == 'change' and change['name'] == 'value':
+                if change["new"] == 0:
+                    image_to_show_name = self.default_image_filename
+                    self.btn_quit.disabled = True
+                    self.btn_next.disabled = True
+                elif change["new"] == 1:
+                    image_to_show_name = original_image_filename
+                    self.btn_quit.disabled = False
+                    self.btn_next.disabled = False
+                else:
+                    image_to_show_name = inpainted_images_pathes[change["new"]-2].split('/')[-1]
+                    print('selected: ', image_to_show_name)
+                    self.btn_quit.disabled = False
+                    self.btn_next.disabled = False
+                image_to_show_path = DiffiusionPainter.js_path + image_to_show_name
+                image_to_show = Image.open(image_to_show_path)
+                clear_output()
+                for w in self.widgets_ls:
+                    display(w)
+                display(image_to_show)
+        self.btn_next.on_click(on_btn_next_clicked)
+        self.btn_quit.on_click(on_btn_quit_clicked)
+       self.inpainted_img_to_select_dropdown.observe(inpainted_img_to_select_dropdown_change)
+        selected_img_name = get_selected_image_name()
+        return selected_img_name
+    def show_images(self, inpainted_filename, original_image_filename=None):
+        if original_image_filename is None:
+            original_image_filename = self.default_image_filename
+        original_image_path = DiffiusionPainter.js_path +  original_image_filename
+        if self.iter == 1:
+            original_image = Image.open(original_image_path)
+            display(original_image)
+            return
+        inpainted_path = DiffiusionPainter.js_path + inpainted_filename
+        print('showing: ', final_img_path, inpainted_path)
+                \end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+        final_image = Image.open(final_img_path)
+        original_image = Image.open(original_image_path)
+        fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+        ax[0].imshow(original_image)
+        ax[0].set_title('Первоначальное изображение: ')
+        ax[0].axis('off')
+        ax[1].imshow(final_image)
+        ax[1].set_title('Конечное изображение: ')
+        ax[1].axis('off')
+        plt.show()
+    def display_widgets(self):
+        for w in self.widgets_ls:
+            display(w)
+    def run_diffusion_pipeline(self, original_image_name, inpaitned_pathes=[]):
+        self.iter += 1
+        print(inpaitned_pathes)
+        num_inpainted_images = len(inpaitned_pathes)
+        selected_img_name = self.create_widgets(original_image_name, inpaitned_pathes)
+        self.display_widgets()
+        img_to_show_path = DiffiusionPainter.js_path + selected_img_name
+        img_to_show = Image.open(img_to_show_path)
+        display(img_to_show)
+\end{lstlisting}
+
+Класс \lstinline{Segmentation}:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+class Segmentation:
+    def __init__(self, model, image_path, image_resize=(1280, 960)):
+        self.image_path = image_path
+        self.image = None
+        self.masks = None
+        self.model = model
+        self.masks = None
+        self.prepared_masks = None
+        self.expanded_masks = None
+        self.image_resize = image_resize
+    def read_image(self, image_path, resize=(1280, 960)):
+        self.image_path = image_path
+        self.image = cv2.imread(image_path)
+        self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+        if resize:
+            self.image = cv2.resize(self.image, (resize[0], resize[1]), interpolation = cv2.INTER_AREA)
+        return self.image
+    def predict(self):
+        image = self.read_image(self.image_path, resize=self.image_resize)
+                \end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+        self.masks = self._get_masks()
+        prepared_masks = self.masks_selection()
+        self.expanded_masks = Segmentation.expand_masks(prepared_masks)
+        return prepared_masks
+    def _get_masks(self):
+        self.model.cuda()
+        mask_generator = SamAutomaticMaskGenerator(self.model)
+        self.masks = mask_generator.generate(self.image)
+        for idx, m in enumerate(self.masks):
+            m['idx'] = idx
+        return self.masks
+    def masks_selection(self):
+        self.prepared_masks = Segmentation._auto_masks_selection(self.masks)
+        return self.prepared_masks
+    def get_intersection(self, mask_id_1, mask_id_2):
+        return (self.masks[mask_id_1]['segmentation'] & self.masks[mask_id_2]['segmentation']).sum()
+    def join_masks(self, mask_id_1, mask_id_2=None):
+        if isinstance(mask_id_1, list):
+            res_mask = self.masks[mask_id_1[0]]['segmentation'].copy()
+            for m in mask_id_1[1:]:
+                res_mask += self.masks[m]['segmentation']
+            return res_mask
+        else:
+            return self.masks[mask_id_1]['segmentation'] + self.masks[mask_id_2]['segmentation']
+    @staticmethod
+    def _auto_masks_selection(masks):
+        res = []
+        visited = set()
+        masks = sorted(masks, key=lambda x: x['area'], reverse=True)
+
+        for idx_mask, mask in enumerate(masks):
+            if mask['idx'] in visited:
+                continue
+            collected_inner_masks = []
+            visited_inner_masks = set()
+            for mini_mask in masks:
+                if mini_mask['idx'] == mask['idx']:
+                    continue
+                if mini_mask['idx'] in visited_inner_masks:
+                    continue
+                thres = 230
+                if (mask['segmentation'] & mini_mask['segmentation']).sum() > thres:
+                    collected_inner_masks.append(mini_mask)
+                            \end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+                    visited_inner_masks.add(mini_mask['idx'])
+                    visited.add(mini_mask['idx'])
+            if len(visited_inner_masks) > 0:
+                res.append((mask['idx'], Segmentation._auto_masks_selection(collected_inner_masks)))
+
+            if len(collected_inner_masks) == 0:
+                res.append((mask['idx'], [], ))
+            visited.add(mask['idx'])
+        return res
+    @staticmethod
+    def expand_masks(masks):
+        d = {}
+        stack = masks[::-1]
+        while stack:
+            main, child = stack.pop()
+            d[main] = [mask[0] for mask in child]
+            for c in child:
+                if c[1]:
+                    stack.append(c)
+        return d
+    def get_mask_by_id(self, mask_id):
+        return self.masks[mask_id]['segmentation']
+    def get_main_masks(self):
+        main_masks_idx = [m[0] for m in self.prepared_masks]
+        main_masks = [m for m in self.masks if m['idx'] in main_masks_idx]
+        return main_masks
+    def get_inner_masks(self, idx):
+        return [m for m in self.masks if m['idx'] in self.expanded_masks[idx]] + [self.masks[idx]]
+\end{lstlisting}
+
+Класс \lstinline{SegmentationByPoints}:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+class SegmentationByPoints:
+    predictor = None
+    def __init__(self, image_path):
+        self.selection_done = False
+        self.image_path = image_path
+        self.image = None
+        self.pos_coords = None
+        self.neg_coords = None
+        self.predictor = SegmntationModel().model
+        self.final_mask = None
+    def read_image(self):
+        self.image = plt.imread(self.image_path)
+        self.image = cv2.resize(self.image, (512, 512))
+        return self.image
+    def predict_mask(self):
+        assert self.selection_done
+                \end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+        self.predictor.set_image(self.image)
+        pos_points = np.array(self.pos_coords)
+        neg_points = np.array(self.neg_coords)
+        pos_labels = np.ones(len(pos_points))
+        neg_labels = np.zeros(len(neg_points))
+        masks, scores, logits = self.predictor.predict(
+            point_coords=pos_points,
+            point_labels=pos_labels,
+            multimask_output=True,)
+        input_point = np.concatenate((pos_points, neg_points), axis=0)
+        input_label = np.concatenate((pos_labels, neg_labels), axis=0)
+        mask_input = logits[np.argmin(scores), :, :]  # Choose the model's best mask
+        masks, _, _ = self.predictor.predict(
+            point_coords=input_point,
+            point_labels=input_label,
+            mask_input=mask_input[None, :, :],
+            multimask_output=False,)
+        self.final_mask = masks
+        return masks, input_point, input_label
+    def select_points(self):
+        %matplotlib ipympl
+        button = widgets.Button(
+            description="End Setting points!",
+            layout=widgets.Layout(width='50%', height='80px'),
+            disabled=False)
+        button.style.button_color = 'lightgreen'
+        output = widgets.Output()
+        image = self.read_image()
+        fig, ax = plt.subplots()
+        def redraw(image):
+            def on_button_clicked(b):
+                with output:
+                    button.disabled=True
+                    button.description = 'Points Saved!'
+                    fig.canvas.mpl_disconnect(cid)
+            button.on_click(on_button_clicked)
+            ax.imshow(image)
+            def onclick(event):
+                x, y = event.xdata, event.ydata
+                if event.button == 1:
+                    self.pos_coords.append((int(x), int(y)))
+                    ax.plot(int(x), int(y), 'go')
+                    print(f"set positive point at x={int(x)}, y={int(y)}")
+                elif event.button == 3:
+                    self.neg_coords.append((int(x), int(y)))
+                    ax.plot(int(x), int(y), 'ro')
+                    \end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+                    print(f"set negative point at x={int(x)}, y={int(y)}")
+            cid = fig.canvas.mpl_connect('button_press_event', onclick)
+            display(button, output)
+            return cid
+        self.pos_coords = []
+        self.neg_coords = []
+        cid = redraw(image)
+        plt.axis('off')
+        plt.show()
+        self.selection_done = True
+        return fig, cid
+\end{lstlisting}

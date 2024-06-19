@@ -1,0 +1,45 @@
+% Contains config of surnames & other
+% "~" - неразрывный пробел
+% "\ " - Явно поставить пробел после команды
+% Можно переиспользовать созданные выше переменные
+
+% Даты, приказы и номера
+\newcommand{\targetYear}{2024}
+%% Приказ
+\newcommand{\uniDecreeDate}{25.03.2024}
+\newcommand{\uniDecreeNumber}{642-с}
+\newcommand{\taskStartDate}{25 марта \targetYear\ г.}
+\newcommand{\taskFinishDate}{1 июня \targetYear\ г.}
+\newcommand{\diplomaVariant}{095}
+\newcommand{\econCalcDate}{03.04.\targetYear\ г.}
+
+% Люди
+\newcommand{\studentShort}{В.С.~Чеботарев}
+\newcommand{\studentFullParental}{Чеботареву Вячеславу Сергеевичу}
+\newcommand{\stdTestTutorShort}{Н.О.~Туровец}
+\newcommand{\headOfDepartmentShort}{Б.В.~Никульшин}
+\newcommand{\practiceTutorShort}{Д.Ф.~Любич}
+\newcommand{\practiceDepartmentTutorShort}{А.И.~Стракович}
+\newcommand{\diplomaTutorShort}{Д.Ф.~Любич}
+\newcommand{\diplomaDepartmentTutorShort}{\practiceDepartmentTutorShort}
+\newcommand{\diplomaEconomyTutorShort}{В.Г.~Горовой}
+
+% Названия
+\newcommand{\taskNameFull}{Программный модуль для изменения изображения на основе текстовых описаний}
+\newcommand{\economicalPartName}{Технико-экономическое обоснование разработки и реализации на рынке программного модуля для изменения изображения на основе текстовых описаний}
+\newcommand{\rub}{р.}
+
+
+% Схемы
+\newcommand{\structScheme}{ГУИР.400201.\diplomaVariant \ С1}
+\newcommand{\blockScheme}{ГУИР.400201.\diplomaVariant \ ПД.1}
+\newcommand{\algScheme}{ГУИР.400201.\diplomaVariant \ ПД.2}
+\newcommand{\seqIcdScheme}{ГУИР.400201.\diplomaVariant \ РР.1}
+\newcommand{\seqGooseScheme}{ГУИР.400201.\diplomaVariant \ РР.2}
+
+% Экономика
+\FPeval{\configRoundSigns}{2}
+\FPeval{\configPercentRoundSigns}{0}
+
+% Остальное
+\newcommand{\rubFormula}{\text{ \rub}}
